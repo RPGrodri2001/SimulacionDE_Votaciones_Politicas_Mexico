@@ -29,7 +29,7 @@
                     <button class="btn btn-custom" onclick="showRegistration()">
                         <i class="fas fa-arrow-right me-2"></i>Comenzar Votación
                     </button>
-                    <button class="btn btn-outline-secondary" onclick="showResults()" style="border: 2px solid var(--primary-pink); color: var(--primary-pink); font-weight: 600;">
+                    <button class="btn btn-outline-primary" onclick="showResults()" style="border: 2px solid var(--primary-pink); color: var(--primary-pink); font-weight: 600;">
                         <i class="fas fa-chart-bar me-2"></i>Ver Resultados
                     </button>
                 </div>
@@ -101,12 +101,12 @@
                     <button type="button" class="btn btn-secondary me-3" onclick="showRegistration()">
                         <i class="fas fa-arrow-left me-2"></i>Regresar
                     </button>
+                    <button type="button" class="btn btn-cancel me-3" onclick="showHome()">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
                     <button type="button" class="btn btn-custom" onclick="submitVote()">
                         <i class="fas fa-paper-plane me-2"></i>Enviar Voto
                     </button>
-<!--                     <button type="button" class="btn btn-outline-primary ms-3" onclick="showResults()">
-                        <i class="fas fa-chart-bar me-2"></i>Ver Resultados
-                    </button> -->
                 </div>
             </div>
         </div>
@@ -164,6 +164,11 @@
                 </button>
             </div>
             <div id="resultsContent"></div>
+            <div class="text-center mt-4">
+                <button class="btn btn-export" onclick="exportToCSV()">
+                    <i class="fas fa-file-export me-2"></i>Exportar a CSV
+                </button>
+            </div>
         </div>
     </div>
 

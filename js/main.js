@@ -149,53 +149,52 @@
         });
 
         // Enviar voto
- function submitVote() {
-    if (!selectedVotes.judge || !selectedVotes.minister || !selectedVotes.magistrate) {
-        showAlert('Por favor seleccione un candidato de cada categoría', 'danger');
-        return;
-    }
-    
-    // Verificar si ya votó
-    const currentVoter = JSON.parse(localStorage.getItem('currentVoter'));
-    const votedUsers = JSON.parse(localStorage.getItem('votedUsers') || '[]');
-    
-    if (votedUsers.includes(currentVoter.curp)) {
-        showAlert('Ya ha emitido su voto anteriormente', 'danger');
-        return;
-    }
-    
-    // Registrar voto
-    const results = JSON.parse(localStorage.getItem('votingResults'));
-    results.judges[selectedVotes.judge]++;
-    results.ministers[selectedVotes.minister]++;
-    results.magistrates[selectedVotes.magistrate]++;
-    
-    localStorage.setItem('votingResults', JSON.stringify(results));
-    
-    // Marcar usuario como votado
-    votedUsers.push(currentVoter.curp);
-    localStorage.setItem('votedUsers', JSON.stringify(votedUsers));
-    
-    showAlert('¡Voto registrado exitosamente! Gracias por participar', 'success');
-    
-    // Resetear selecciones
-    selectedVotes = { judge: null, minister: null, magistrate: null };
-    document.querySelectorAll('.candidate-card').forEach(card => {
-        card.classList.remove('selected');
-        card.querySelector('.fas.fa-check-circle').style.display = 'none';
-    });
-    
-    // Limpiar datos del votante y regresar al inicio después de 3 segundos
-    setTimeout(() => {
-        localStorage.removeItem('currentVoter');
-        document.getElementById('fullName').value = '';
-        document.getElementById('curp').value = '';
-        document.getElementById('curpCounter').textContent = '0/18 caracteres';
-        document.getElementById('curpCounter').className = 'text-muted';
-        showHome();
-    }, 3000);
-}
-
+        function submitVote() {
+            if (!selectedVotes.judge || !selectedVotes.minister || !selectedVotes.magistrate) {
+                showAlert('Por favor seleccione un candidato de cada categoría', 'danger');
+                return;
+            }
+            
+            // Verificar si ya votó
+            const currentVoter = JSON.parse(localStorage.getItem('currentVoter'));
+            const votedUsers = JSON.parse(localStorage.getItem('votedUsers') || '[]');
+            
+            if (votedUsers.includes(currentVoter.curp)) {
+                showAlert('Ya ha emitido su voto anteriormente', 'danger');
+                return;
+            }
+            
+            // Registrar voto
+            const results = JSON.parse(localStorage.getItem('votingResults'));
+            results.judges[selectedVotes.judge]++;
+            results.ministers[selectedVotes.minister]++;
+            results.magistrates[selectedVotes.magistrate]++;
+            
+            localStorage.setItem('votingResults', JSON.stringify(results));
+            
+            // Marcar usuario como votado
+            votedUsers.push(currentVoter.curp);
+            localStorage.setItem('votedUsers', JSON.stringify(votedUsers));
+            
+            showAlert('¡Voto registrado exitosamente! Gracias por participar', 'success');
+            
+            // Resetear selecciones
+            selectedVotes = { judge: null, minister: null, magistrate: null };
+            document.querySelectorAll('.candidate-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('.fas.fa-check-circle').style.display = 'none';
+            });
+            
+            // Limpiar datos del votante y regresar al inicio después de 3 segundos
+            setTimeout(() => {
+                localStorage.removeItem('currentVoter');
+                document.getElementById('fullName').value = '';
+                document.getElementById('curp').value = '';
+                document.getElementById('curpCounter').textContent = '0/18 caracteres';
+                document.getElementById('curpCounter').className = 'text-muted';
+                showHome();
+            }, 3000);
+        }
 
         // Mostrar alertas
         function showAlert(message, type, containerId = 'alertContainer') {
@@ -319,6 +318,59 @@
             document.getElementById('resultsModal').classList.add('d-none');
         }
 
+        // Función para exportar a CSV
+        function exportToCSV() {
+            const results = JSON.parse(localStorage.getItem('votingResults'));
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            
+            // Crear contenido CSV
+            let csvContent = "Categoria,Candidato,Votos,Porcentaje\n";
+            
+            // Jueces
+            const totalJudges = Object.values(results.judges).reduce((a, b) => a + b, 0);
+            Object.entries(results.judges).forEach(([name, votes]) => {
+                const percentage = totalJudges > 0 ? (votes / totalJudges * 100).toFixed(2) : 0;
+                csvContent += `Jueces,${name},${votes},${percentage}%\n`;
+            });
+            
+            // Ministros
+            const totalMinisters = Object.values(results.ministers).reduce((a, b) => a + b, 0);
+            Object.entries(results.ministers).forEach(([name, votes]) => {
+                const percentage = totalMinisters > 0 ? (votes / totalMinisters * 100).toFixed(2) : 0;
+                csvContent += `Ministros,${name},${votes},${percentage}%\n`;
+            });
+            
+            // Magistrados
+            const totalMagistrates = Object.values(results.magistrates).reduce((a, b) => a + b, 0);
+            Object.entries(results.magistrates).forEach(([name, votes]) => {
+                const percentage = totalMagistrates > 0 ? (votes / totalMagistrates * 100).toFixed(2) : 0;
+                csvContent += `Magistrados,${name},${votes},${percentage}%\n`;
+            });
+            
+            // Totales
+            csvContent += `\nResumen,,,\n`;
+            csvContent += `Total Jueces,,${totalJudges},\n`;
+            csvContent += `Total Ministros,,${totalMinisters},\n`;
+            csvContent += `Total Magistrados,,${totalMagistrates},\n`;
+            csvContent += `Total General,,${Math.max(totalJudges, totalMinisters, totalMagistrates)},\n`;
+            csvContent += `Fecha Exportación,,${new Date().toLocaleString('es-MX')},\n`;
+            
+            // Crear archivo y descargar
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `resultados_votacion_${timestamp}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('Resultados exportados exitosamente', 'success', 'resultsContent');
+        }
+
         // Función para limpiar datos (útil para pruebas)
         function resetVotingData() {
             localStorage.removeItem('votingResults');
@@ -357,155 +409,5 @@
             e.target.value = value;
         });
 
-        // Animaciones adicionales
-        document.querySelectorAll('.btn-custom').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-            });
-        });
-
-        // Efectos de hover para las tarjetas de candidatos
-        document.addEventListener('DOMContentLoaded', function() {
-            // Agregar efectos de sonido visual (sin audio real)
-            document.querySelectorAll('button').forEach(button => {
-                button.addEventListener('click', function() {
-                    // Efecto de onda al hacer clic
-                    const ripple = document.createElement('span');
-                    ripple.style.position = 'absolute';
-                    ripple.style.borderRadius = '50%';
-                    ripple.style.background = 'rgba(255, 255, 255, 0.6)';
-                    ripple.style.transform = 'scale(0)';
-                    ripple.style.animation = 'ripple 0.6s linear';
-                    ripple.style.left = '50%';
-                    ripple.style.top = '50%';
-                    ripple.style.marginLeft = '-20px';
-                    ripple.style.marginTop = '-20px';
-                    ripple.style.width = '40px';
-                    ripple.style.height = '40px';
-                    
-                    this.style.position = 'relative';
-                    this.style.overflow = 'hidden';
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
-        });
-
-        // Agregar animación de ripple con CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-            
-            .candidate-card {
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .candidate-card::after {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 5px;
-                height: 5px;
-                background: rgba(255, 107, 157, 0.5);
-                opacity: 0;
-                border-radius: 100%;
-                transform: scale(1, 1) translate(-50%);
-                transform-origin: 50% 50%;
-            }
-            
-            .candidate-card:focus:not(:active)::after {
-                animation: ripple 1s ease-out;
-            }
-            
-            @keyframes ripple {
-                0% {
-                    transform: scale(0, 0);
-                    opacity: 1;
-                }
-                20% {
-                    transform: scale(25, 25);
-                    opacity: 1;
-                }
-                100% {
-                    opacity: 0;
-                    transform: scale(40, 40);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
         // Inicializar el sistema al cargar la página
         initializeVoting();
-
-        // Agregar funcionalidad de accesibilidad
-        document.addEventListener('keydown', function(e) {
-            // Permitir navegación con teclado
-            if (e.key === 'Escape') {
-                if (!document.getElementById('tutorialModal').classList.contains('d-none')) {
-                    closeTutorial();
-                }
-                if (!document.getElementById('resultsModal').classList.contains('d-none')) {
-                    closeResults();
-                }
-            }
-        });
-
-        // Mejorar la experiencia táctil en dispositivos móviles
-        if ('ontouchstart' in window) {
-            document.querySelectorAll('.candidate-card').forEach(card => {
-                card.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.98)';
-                });
-                
-                card.addEventListener('touchend', function() {
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 100);
-                });
-            });
-        }
-
-        // Función para exportar resultados (funcionalidad adicional)
-        function exportResults() {
-            const results = JSON.parse(localStorage.getItem('votingResults'));
-            const timestamp = new Date().toISOString();
-            
-            const exportData = {
-                timestamp: timestamp,
-                results: results,
-                summary: {
-                    totalVoters: Math.max(
-                        Object.values(results.judges).reduce((a, b) => a + b, 0),
-                        Object.values(results.ministers).reduce((a, b) => a + b, 0),
-                        Object.values(results.magistrates).reduce((a, b) => a + b, 0)
-                    )
-                }
-            };
-            
-            const dataStr = JSON.stringify(exportData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = `resultados_votacion_${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-        }
-
-        // Agregar botón de exportar en los resultados (opcional)
-        console.log('Sistema de votación inicializado correctamente');
-        console.log('Para exportar resultados, ejecute: exportResults()');
-        console.log('Para reiniciar datos, ejecute: resetVotingData()');
-    
