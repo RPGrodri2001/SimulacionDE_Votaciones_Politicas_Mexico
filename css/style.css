@@ -1,0 +1,347 @@
+    
+        :root {
+            --primary-pink: #ff6b9d;
+            --secondary-pink: #ff8fb3;
+            --dark-bg: #1a1a1a;
+            --light-gray: #f8f9fa;
+            --purple: #8e44ad;
+            --aqua: #16a085;
+            --yellow: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--secondary-pink) 50%, #ffffff 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .voting-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(223, 20, 20, 0.2);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #2c2c2c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--secondary-pink) 100%);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 107, 157, 0.4);
+            color: white;
+        }
+
+        .btn-tutorial {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #2c2c2c 100%);
+            color: white;
+        }
+
+        .btn-tutorial:hover {
+            background: linear-gradient(135deg, #2c2c2c 0%, var(--dark-bg) 100%);
+            color: white;
+        }
+
+        .form-section {
+            padding: 40px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 157, 0.25);
+            background: white;
+        }
+
+        .candidate-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin: 15px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.507);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .candidate-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .candidate-card.judge::before {
+            background: linear-gradient(90deg, var(--purple), #9b59b6);
+        }
+
+        .candidate-card.minister::before {
+            background: linear-gradient(90deg, var(--aqua), #1abc9c);
+        }
+
+        .candidate-card.magistrate::before {
+            background: linear-gradient(90deg, var(--yellow), #f1c40f);
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .candidate-card.selected {
+            border-color: var(--primary-pink);
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .candidate-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .candidate-card:hover .candidate-photo {
+            transform: scale(1.1);
+        }
+
+        .position-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .judge-badge {
+            background: linear-gradient(135deg, var(--purple), #9b59b6);
+            color: white;
+        }
+
+        .minister-badge {
+            background: linear-gradient(135deg, var(--aqua), #1abc9c);
+            color: white;
+        }
+
+        .magistrate-badge {
+            background: linear-gradient(135deg, var(--yellow), #f39c12);
+            color: white;
+        }
+
+        .results-modal {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .results-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .progress-custom {
+            height: 15px;
+            border-radius: 10px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+
+        .progress-bar-custom {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        .tutorial-modal {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .tutorial-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-pink), var(--secondary-pink));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+            padding: 20px;
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+
+        .alert-success-custom {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+
+        .alert-danger-custom {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-bg);
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-pink), var(--secondary-pink));
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .candidate-card {
+                padding: 20px;
+            }
+            
+            .candidate-photo {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-close-custom {
+            background: var(--primary-pink);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close-custom:hover {
+            background: var(--secondary-pink);
+            transform: scale(1.1);
+        }
+    

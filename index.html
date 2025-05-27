@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Sistema de Votación Electrónica - México</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="main-container">
+        <div class="voting-card fade-in">
+            <div class="header">
+                <h1><i class="fas fa-vote-yea me-3"></i>Sistema de Votación Electrónica</h1>
+                <p>Elecciones Judiciales - México 2025</p>
+            </div>
+
+            <!-- Pantalla de inicio -->
+            <div id="homeScreen" class="form-section text-center">
+                <h2 class="section-title">Bienvenido al Sistema de Votación</h2>
+                <p class="lead mb-4">Sistema diseñado especialmente para adultos mayores con interfaz sencilla y accesible</p>
+                
+                <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                    <button class="btn btn-warning" onclick="showTutorial()">
+                        <i class="fas fa-play-circle me-2"></i>Ver Tutorial
+                    </button>
+                    <button class="btn btn-custom" onclick="showRegistration()">
+                        <i class="fas fa-arrow-right me-2"></i>Comenzar Votación
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="showResults()" style="border: 2px solid var(--primary-pink); color: var(--primary-pink); font-weight: 600;">
+                        <i class="fas fa-chart-bar me-2"></i>Ver Resultados
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pantalla de registro -->
+            <div id="registrationScreen" class="form-section" style="display: none;">
+                <h2 class="section-title">Registro de Votante</h2>
+                <div id="registrationAlertContainer"></div>
+                <form id="voterForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-user me-2"></i>Nombres Completos
+                            </label>
+                            <input type="text" class="form-control" id="fullName" required placeholder="Ingrese sus nombres completos">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-id-card me-2"></i>CURP
+                            </label>
+                            <input type="text" class="form-control" id="curp" required placeholder="Ingrese su CURP (18 caracteres)" maxlength="18">
+                            <div class="form-text">
+                                <span id="curpCounter" class="text-muted">0/18 caracteres</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-secondary me-3" onclick="showHome()">
+                            <i class="fas fa-arrow-left me-2"></i>Regresar
+                        </button>
+                        <button type="submit" class="btn btn-custom">
+                            <i class="fas fa-check me-2"></i>Continuar al Voto
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Pantalla de votación -->
+            <div id="votingScreen" class="form-section" style="display: none;">
+                <h2 class="section-title">Realice su Voto</h2>
+                <div id="alertContainer"></div>
+                
+                <!-- Candidatos a Juez -->
+                <div class="mb-5">
+                    <div class="position-badge judge-badge">
+                        <i class="fas fa-gavel me-2"></i>Candidatos a Juez
+                    </div>
+                    <div class="row" id="judgesCandidates"></div>
+                </div>
+
+                <!-- Candidatos a Ministro -->
+                <div class="mb-5">
+                    <div class="position-badge minister-badge">
+                        <i class="fas fa-university me-2"></i>Candidatos a Ministro
+                    </div>
+                    <div class="row" id="ministersCandidates"></div>
+                </div>
+
+                <!-- Candidatos a Magistrado -->
+                <div class="mb-5">
+                    <div class="position-badge magistrate-badge">
+                        <i class="fas fa-balance-scale me-2"></i>Candidatos a Magistrado
+                    </div>
+                    <div class="row" id="magistratesCandidates"></div>
+                </div>
+
+                <div class="text-center">
+                    <button type="button" class="btn btn-secondary me-3" onclick="showRegistration()">
+                        <i class="fas fa-arrow-left me-2"></i>Regresar
+                    </button>
+                    <button type="button" class="btn btn-custom" onclick="submitVote()">
+                        <i class="fas fa-paper-plane me-2"></i>Enviar Voto
+                    </button>
+<!--                     <button type="button" class="btn btn-outline-primary ms-3" onclick="showResults()">
+                        <i class="fas fa-chart-bar me-2"></i>Ver Resultados
+                    </button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Tutorial -->
+    <div id="tutorialModal" class="position-fixed top-0 start-0 w-100 h-100 tutorial-modal d-none d-flex align-items-center justify-content-center" style="z-index: 1050;">
+        <div class="tutorial-content p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="mb-0"><i class="fas fa-info-circle me-2"></i>Tutorial de Uso</h3>
+                <button class="btn-close-custom" onclick="closeTutorial()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="tutorial-steps">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h5 class="mb-1">Registro</h5>
+                        <p class="mb-0">Ingrese su nombre completo y CURP para identificarse</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h5 class="mb-1">Selección</h5>
+                        <p class="mb-0">Haga clic en un candidato de cada categoría (Juez, Ministro, Magistrado)</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h5 class="mb-1">Confirmación</h5>
+                        <p class="mb-0">Revise sus selecciones y envíe su voto</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="step-number">4</div>
+                    <div>
+                        <h5 class="mb-1">Resultados</h5>
+                        <p class="mb-0">Puede ver los resultados en tiempo real</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Resultados -->
+    <div id="resultsModal" class="position-fixed top-0 start-0 w-100 h-100 results-modal d-none d-flex align-items-center justify-content-center" style="z-index: 1050;">
+        <div class="results-content p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="mb-0"><i class="fas fa-poll me-2"></i>Resultados en Vivo</h3>
+                <button class="btn-close-custom" onclick="closeResults()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="./js/main.js"></script>
+</body>
+</html>
